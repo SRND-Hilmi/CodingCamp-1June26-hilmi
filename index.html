@@ -1,11 +1,202 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚔ Pixel Dashboard RPG</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    
+
+<!-- ── Loading Screen ── -->
+<div id="loading-screen">
+  <p class="loading-logo">⚔ PIXEL DASHBOARD ⚔<br>PRODUCTIVITY RPG</p>
+  <div class="loading-bar-wrap">
+    <div class="loading-bar-fill"></div>
+  </div>
+  <p class="loading-sub">▌ LOADING SAVE DATA... ▐</p>
+</div>
+
+<!-- ── Background Layer ── -->
+<div class="bg-layer" id="bgLayer">
+  <div class="bg-moon"></div>
+  <div id="starsContainer"></div>
+  <!-- Pixel mountain silhouettes (SVG-free, CSS only) -->
+  <div class="bg-mountains" id="bgMountains"></div>
+</div>
+
+<!-- ── Achievement Popup ── -->
+<div id="achievement-popup" role="status" aria-live="polite">
+  <div class="ach-header">
+    <span class="ach-icon">🏆</span>
+    <span>ACHIEVEMENT UNLOCKED!</span>
+  </div>
+  <div class="ach-title" id="achTitle">Quest Complete!</div>
+  <div class="ach-desc"  id="achDesc">You completed a task!</div>
+</div>
+
+<!-- ── Toast ── -->
+<div id="toast" role="status" aria-live="polite"></div>
+
+<!-- ══════════════════════════════════════
+     MAIN APP
+════════════════════════════════════════ -->
+<div class="app">
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <span class="topbar-brand">⚔ PIXEL DASHBOARD v1.0</span>
+    <div class="pixel-toggle-wrap">
+      <span class="toggle-label" id="themeLabel">DARK MODE</span>
+      <label class="pixel-toggle" title="Toggle light / dark mode">
+        <input type="checkbox" id="themeToggle" aria-label="Toggle theme">
+        <span class="toggle-track">
+          <span class="toggle-thumb" id="toggleThumb">🌙</span>
+        </span>
+      </label>
+    </div>
+  </div>
+
+  <!-- ── Player Status (Greeting) ── -->
+  <div class="panel greeting-card">
+    <div class="panel-title-bar">
+      <span>👤</span> PLAYER STATUS
+    </div>
+    <div class="panel-body">
+      <div class="greeting-inner">
+
+        <div class="pixel-avatar-sprite" id="avatarSprite" title="Click to change avatar" tabindex="0" role="button" aria-label="Change avatar">🧙</div>
+
+        <div class="greeting-info">
+          <div class="player-level" id="playerLevel">LEVEL 1 PRODUCTIVITY ADVENTURER</div>
+          <div id="clock" class="greeting-time-display" aria-live="polite">00:00:00</div>
+          <div id="date"  class="greeting-date-display"></div>
+          <div id="greetText" class="greeting-message">Good morning! ⚔</div>
+          <form class="name-form" id="nameForm" autocomplete="off">
+            <label class="name-form-label" for="nameInput">HERO NAME:</label>
+            <input
+              class="pixel-input"
+              id="nameInput"
+              type="text"
+              placeholder="Enter name..."
+              maxlength="40"
+              aria-label="Your name"
+            >
+            <button class="pixel-btn pixel-btn-primary pixel-btn-sm" type="submit">SAVE</button>
+          </form>
+        </div>
+
+        <div class="greeting-right">
+          <div class="streak-box" title="Daily visit streak">
+            <span class="streak-lbl">🔥 DAILY STREAK</span>
+            <span class="streak-val" id="streakCount">0</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Focus Quest (Timer) ── -->
+  <div class="panel">
+    <div class="panel-title-bar">
+      <span>⚡</span> FOCUS QUEST
+    </div>
+    <div class="panel-body">
+
+      <div id="timerDisplay" class="timer-number" aria-live="polite">25:00</div>
+
+      <div class="energy-bar-wrap">
+        <div class="energy-bar-meta">
+          <span>QUEST PROGRESS</span>
+          <span id="timerPct">0%</span>
+        </div>
+        <div class="energy-bar-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+          <div class="energy-bar-fill" id="timerBar"></div>
+        </div>
+      </div>
+
+      <div class="timer-btn-row">
+        <button class="pixel-btn pixel-btn-primary"   id="timerStart">▶ START</button>
+        <button class="pixel-btn pixel-btn-secondary" id="timerStop"  disabled>⏸ PAUSE</button>
+        <button class="pixel-btn pixel-btn-secondary" id="timerReset">↺ RESET</button>
+      </div>
+
+      <div class="timer-settings-row">
+        <label for="timerMinutes">DURATION:</label>
+        <input class="pixel-number-input" type="number" id="timerMinutes" value="25" min="1" max="180" aria-label="Timer duration in minutes">
+        <span class="timer-unit">MIN</span>
+      </div>
+
+      <p class="timer-quest-label" id="timerLabel">25 min focus session</p>
+
+    </div>
+  </div>
+
+  <!-- ── Quest Log (To-Do) ── -->
+  <div class="panel">
+    <div class="panel-title-bar">
+      <span>📜</span> QUEST LOG
+    </div>
+    <div class="panel-body">
+
+      <form class="quest-form" id="todoForm" autocomplete="off">
+        <input
+          class="pixel-input"
+          id="todoInput"
+          type="text"
+          placeholder="Add new quest..."
+          maxlength="120"
+          aria-label="New task"
+        >
+        <button class="pixel-btn pixel-btn-primary pixel-btn-sm" type="submit">+ADD</button>
+      </form>
+
+      <div class="quest-controls">
+        <label for="todoSort">SORT:</label>
+        <select class="pixel-select" id="todoSort" aria-label="Sort tasks">
+          <option value="default">DEFAULT</option>
+          <option value="alpha">A → Z</option>
+          <option value="done-last">ACTIVE FIRST</option>
+          <option value="done-first">DONE FIRST</option>
+        </select>
+      </div>
+
+      <ul class="quest-list" id="todoList" aria-label="Task list"></ul>
+
+      <div class="quest-stats-row">
+        <div class="xp-bar" role="progressbar" aria-label="XP progress">
+          <div class="xp-fill" id="xpFill"></div>
+        </div>
+        <span class="quest-stats-txt" id="todoStats">0/0 QUESTS</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Portals (Quick Links) ── -->
+  <div class="panel">
+    <div class="panel-title-bar">
+      <span>🌀</span> PORTALS
+    </div>
+    <div class="panel-body">
+
+      <div class="portals-grid" id="linksGrid" aria-label="Quick links"></div>
+
+      <form class="portal-add-form" id="linkForm" autocomplete="off">
+        <input class="pixel-input" id="linkName" type="text" placeholder="Name"  maxlength="30"  aria-label="Link name">
+        <input class="pixel-input" id="linkUrl"  type="text" placeholder="URL"   maxlength="200" aria-label="Link URL">
+        <button class="pixel-btn pixel-btn-primary pixel-btn-sm" type="submit">+ADD</button>
+      </form>
+
+    </div>
+  </div>
+
+</div><!-- .app -->
+
+<script src="js/script.js"></script>
 </body>
 </html>
